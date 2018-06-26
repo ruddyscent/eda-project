@@ -1,105 +1,317 @@
-TITLE by YOUR_NAME_HERE
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+Exploration of Red Wine Quality by Kyungwon Chun
 ========================================================
 
-> **Tip**: You will see quoted sections like this throughout the template to
-help you construct your report. Make sure that you remove these notes before
-you finish and submit your project!
-
-> **Tip**: One of the requirements of this project is that your code follows
-good formatting techniques, including limiting your lines to 80 characters or
-less. If you're using RStudio, go into Preferences \> Code \> Display to set up
-a margin line to help you keep track of this guideline!
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
-# Load all of the packages that you end up using in your analysis in this code
-# chunk.
-
-# Notice that the parameter "echo" was set to FALSE for this code chunk. This
-# prevents the code from displaying in the knitted HTML output. You should set
-# echo=FALSE for all code chunks in your file, unless it makes sense for your
-# report to show the code that generated a particular plot.
-
-# The other parameters for "message" and "warning" should also be set to FALSE
-# for other code chunks once you have verified that each plot comes out as you
-# want it to. This will clean up the flow of your report.
+#install.packages('psych')
+#install.packages('dplyr')
 
 library(ggplot2)
+library(GGally)
+library(psych)
+library(dplyr)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
 # Load the Data
-
+wqr <- read.csv('wineQualityReds.csv')
+str(wqr)
 ```
 
-> **Tip**: Before you create any plots, it is a good idea to provide a short
-introduction into the dataset that you are planning to explore. Replace this
-quoted text with that general information!
+> This tidy dataset contains 1,599 red wines with 11 variables on the chemical properties of the wine. At least 3 wine experts rated the quality of each wine, providing a rating from 0 (very bad) to 10 (very excellent).
 
 # Univariate Plots Section
 
-> **Tip**: In this section, you should perform some preliminary exploration of
-your dataset. Run some summaries of the data and create univariate plots to
-understand the structure of the individual variables in your dataset. Don't
-forget to add a comment after each plot or closely-related group of plots!
-There should be multiple code chunks and text sections; the first one below is
-just to help you get started.
-
-```{r echo=FALSE, Univariate_Plots}
-
+```{r echo=FALSE}
+summary(wqr)
 ```
 
-> **Tip**: Make sure that you leave a blank line between the start / end of
-each code block and the end / start of your Markdown text so that it is
-formatted nicely in the knitted text. Note as well that text on consecutive
-lines is treated as a single space. Make sure you have a blank line between
-your paragraphs so that they too are formatted for easy readability.
+```{r echo=FALSE}
+ggplot(aes(fixed.acidity), data=wqr) +
+  geom_histogram(binwidth=0.5)
+```
+
+```{r echo=FALSE}
+summary(wqr$fixed.acidity)
+```
+
+Most of the wines have fixed acidity between 7.10 and 9.20.
+
+```{r echo=FALSE}
+ggplot(aes(volatile.acidity), data=wqr) +
+  geom_histogram(binwidth=0.02)
+```
+
+The valatile acidity shows a bimodal distribution.
+
+```{r echo=FALSE}
+summary(wqr$volatile.acidity)
+```
+
+Most of the wines have volatile acidity between 0.39 and 0.64.
+
+```{r echo=FALSE}
+ggplot(aes(volatile.acidity + fixed.acidity), data=wqr) +
+  geom_histogram(binwidth=0.1)
+```
+
+```{r echo=FALSE}
+ggplot(aes(citric.acid), data=wqr) +
+  geom_histogram(binwidth=0.05)
+```
+
+```{r echo=FALSE}
+ggplot(aes(residual.sugar), data=wqr) +
+  geom_histogram(binwidth=0.2)
+```
+
+The residual sugar shows left-biased and long-tailed distribution.
+
+```{r echo=FALSE}
+ggplot(aes(chlorides), data=wqr) +
+  geom_histogram(binwidth=0.01)
+```
+
+The chlorides show left-biased and long-tailed distribution.
+
+```{r echo=FALSE}
+ggplot(aes(free.sulfur.dioxide), data=wqr) +
+  geom_histogram(binwidth=1)
+```
+
+```{r echo=FALSE}
+ggplot(aes(total.sulfur.dioxide), data=wqr) +
+  geom_histogram(binwidth=5)
+```
+
+The total sulfur dioxide has some outliers.
+
+```{r echo=FALSE}
+ggplot(aes(density), data=wqr) +
+  geom_histogram(binwidth=0.0005)
+```
+
+```{r echo=FALSE}
+summary(wqr$density)
+```
+
+Most of the wines have a density between 0.9956 and 0.9978.
+
+```{r echo=FALSE}
+ggplot(aes(pH), data=wqr) +
+  geom_histogram(binwidth=0.05)
+```
+
+```{r echo=FALSE}
+summary(wqr$pH)
+```
+
+Most of the wines have pH between 3.210 and 3.400.
+
+```{r echo=FALSE}
+ggplot(aes(sulphates), data=wqr) +
+  geom_histogram(binwidth=0.05)
+```
+
+```{r echo=FALSE}
+ggplot(aes(alcohol), data=wqr) +
+  geom_histogram(binwidth=0.1)
+```
+
+```{r echo=FALSE}
+ggplot(aes(as.factor(quality)), data=wqr) +
+  geom_bar()
+```
+
+```{r echo=FALSE}
+summary(wqr$quality)
+```
+
+Most of the wines have 5 or 6 in quality.
 
 # Univariate Analysis
 
-> **Tip**: Now that you've completed your univariate explorations, it's time to
-reflect on and summarize what you've found. Use the questions below to help you
-gather your observations and add your own if you have other thoughts!
-
 ### What is the structure of your dataset?
 
+> There are 1,5999 red wines in the dataset with 13 features (X, fixed acidity,
+volatile acidity, citric acid, residual sugar, chlorides, free sulfur dioxide,
+total sulfur dioxide, density, pH, sulfates, alcohol, quality). X identifies 
+the wines, and quality represents that how good the wine. The X and quality are
+unordered and ordered factor variables, but I treated them as numerical 
+variables for convenience. All other features represent chemical properties of 
+wine.
+
+```{r echo=FALSE}
+summary(wqr$quality)
+```
+
+> Other observations: 
+ * Wines with quality 5 or 6 are most common.
+ * The median wine quality is 6.
+ * Most wines have a quality of 5 or better.
+ * About 75% of wines have a quality of 6 or worse.
+ * The worst and best quality in the data set is 3 and 8, respectively.
+ 
 ### What is/are the main feature(s) of interest in your dataset?
+
+> The main feature in the data set is quality. I'd like to determine which 
+features are best for predicting the wine quality. I suspect quality and some 
+combination of the other variables can be used to build a predictive model for 
+wine quality.
 
 ### What other features in the dataset do you think will help support your \
 investigation into your feature(s) of interest?
 
+> The primary wine characteristics are sweetness, acidity, tannin, alcohol, and 
+body. Residual sugar, fixed and volatile acidity, alcohol, and density determine
+those characteristics. I guess that these variables are mainly related to the 
+wine quality.
+
 ### Did you create any new variables from existing variables in the dataset?
+
+> I created a variable for the total acidity using the volatile and the 
+fixed acids.
 
 ### Of the features you investigated, were there any unusual distributions? \
 Did you perform any operations on the data to tidy, adjust, or change the form \
 of the data? If so, why did you do this?
 
+> Volatile acidity shows a bimodal distribution.
 
 # Bivariate Plots Section
 
-> **Tip**: Based on what you saw in the univariate plots, what relationships
-between variables might be interesting to look at in this section? Don't limit
-yourself to relationships between a main output feature and one of the
-supporting variables. Try to look at relationships between supporting variables
-as well.
-
-```{r echo=FALSE, Bivariate_Plots}
-
+```{r echo=FALSE}
+round(cor(wqr[!names(wqr) %in% c("X")]), 2)
 ```
 
-# Bivariate Analysis
+```{r echo=FALSE}
+pairs.panels(wqr[names(wqr) %in% c('pH', 'fixed.acidity', 'citric.acid', 
+                                   'volatile.acidity', 'alcohol', 'density', 
+                                   'quality')])
+```
 
-> **Tip**: As before, summarize what you found in your bivariate explorations
-here. Use the questions below to guide your discussion.
+> The fixed acidity and volatile acidity has strong positive and negative 
+correlations with citric acid.
+
+> The pH has a strong negative correlation with fixed acidity, citric acid, but 
+does not with volatile acidity.
+
+> The fixed acidity and alcohol have significant positive and negative 
+correlations with density, respectively.
+
+> Most of the variables do not seem to have strong correlations with quality, 
+but alcohol and volatile acidity have considerable positive and negative 
+correlation with quality, respectively.
+
+```{r}
+ggplot(wqr, aes(x=fixed.acidity, y=pH)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+> The strongest correlation in this data set appears between fixed acidity and 
+pH. High acidity means low pH, and the graph coincides with this fact.  
+
+```{r}
+ggplot(wqr, aes(x=fixed.acidity, y=citric.acid)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+```{r}
+ggplot(wqr, aes(x=fixed.acidity, y=density)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+> The fixed acidity has strong positive correlations with citric acid and 
+density, too.
+
+```{r}
+ggplot(wqr, aes(x=citric.acid, y=volatile.acidity)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+```{r}
+ggplot(wqr, aes(x=citric.acid, y=pH)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+> The citric acid has considerable negative correlations with volatile acidity
+and pH.
+
+```{r}
+ggplot(wqr, aes(x=alcohol, y=density)) +
+  geom_point(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+> The alcohol and density also shows considerable negative correlation.
+
+```{r}
+ggplot(wqr, aes(x=quality, y=volatile.acidity)) +
+  geom_jitter(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+```{r}
+ggplot(wqr, aes(x=quality, y=alcohol)) +
+  geom_jitter(alpha = 0.3, size = 2) +
+  stat_smooth(method='lm')
+```
+
+> Two variables, volatile acidity and alcohol have considerable correlation with
+quality.
+
+```{r}
+ggplot(wqr, aes(x=factor(quality), y=alcohol)) + 
+  geom_boxplot(notch=FALSE)
+```
+
+> It seems that medium and high quality wines have positive relations to 
+alcohol.
+
+```{r}
+ggplot(wqr, aes(x=factor(quality), y=volatile.acidity)) + 
+  geom_boxplot(notch=FALSE)
+```
+
+> The trend between volatile acidity and quality is clear. The better quality
+wine has the less volatile acidity.
+
+# Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the \
 investigation. How did the feature(s) of interest vary with other features in \
 the dataset?
 
+> The quality correlates with alcohol and volatile acidity.
+
 ### Did you observe any interesting relationships between the other features \
 (not the main feature(s) of interest)?
 
+> Citric acid is one of the main component of fixed acidity. As a result, they 
+have strong positive correlation. 
+
+> Low pH causes more fixed acidiity. Therfore, fixed acidity and citric acid 
+negatively correlates to the pH.
+
+>A wine with more volatle acidity tends to have less citric acid.
+
+> A wine with more fixed acidity tends to more dense. By the way, A wine with
+more alcohol tends to less dense.
+
 ### What was the strongest relationship you found?
 
+> The fixed acidity is positively and strongly corrrelated with citric acid and 
+density. The citric acid may substitute for fixed acidity and density with even 
+better estimation of wine quality.
 
 # Multivariate Plots Section
 
@@ -112,6 +324,39 @@ will do that.
 
 ```{r echo=FALSE, Multivariate_Plots}
 
+```
+
+
+```{r}
+ggplot(wqr, aes(x=alcohol, y=volatile.acidity)) +
+  geom_point(alpha = 0.5, size = 2, position = 'jitter', aes(color=quality)) + 
+  scale_color_gradient2(midpoint=mean(wqr$quality), low="blue", mid="white", 
+                        high="red", space ="Lab" )
+```
+
+```{r}
+ggplot(wqr, aes(x=alcohol, y=1/volatile.acidity)) +
+  geom_point(alpha = 0.5, size = 2, position = 'jitter', aes(color=quality)) + 
+  scale_color_gradient2(midpoint=mean(wqr$quality), low="blue", mid="white", 
+                        high="red", space ="Lab" )
+```
+
+```{r}
+ggplot(wqr, aes(x=alcohol, y=1/volatile.acidity)) +
+  geom_point(alpha = 0.5, size = 2, position = 'jitter', aes(color=quality)) + 
+  scale_color_gradient2(midpoint=mean(wqr$quality), low="blue", mid="white", 
+                        high="red", space ="Lab" )
+```
+
+```{r}
+cor.test(wqr$alcohol - wqr$volatile.acidity, wqr$quality)
+```
+```{r}
+cor.test(wqr$alcohol - wqr$volatile.acidity^3 + wqr$citric.acid - wqr$pH + wqr$sulphates, wqr$quality)
+```
+
+```{r}
+cor.test(wqr$fixed.acidity+wqr$citric.acid-wqr$density, wqr$quality)
 ```
 
 # Multivariate Analysis
