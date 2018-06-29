@@ -529,3 +529,15 @@ this attempt helped to raise the quality prediction accuracy to some extent.
 The resultant model had a low prediction success rate because most of the wine 
 contained in the data had a quality of 5 or 6 and the number of samples for 
 other qualities was not sufficient.
+
+This project used only red wine dataset, but the white wine dataset contains 
+three times more observable than red wine dataset. If there are common
+constituents among the two types of wines, and if they exhibit the same tendency
+about quality, it would be possible to supplement insufficient observables.
+
+------
+
+# References
+
+* https://en.wikipedia.org/wiki/Acids_in_wine
+* https://winefolly.com/review/wine-characteristics/
